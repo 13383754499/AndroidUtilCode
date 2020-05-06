@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 import android.view.View;
 
@@ -35,8 +37,15 @@ import static android.Manifest.permission.CALL_PHONE;
  */
 class UtilsBridge {
 
-    static void init() {
-        UtilsActivityLifecycleImpl.INSTANCE.init();
+    static void init(Application app) {
+        UtilsActivityLifecycleImpl.INSTANCE.init(app);
+    }
+
+    static void unInit(Application app) {
+        UtilsActivityLifecycleImpl.INSTANCE.unInit(app);
+    }
+
+    static void preLoad() {
         preLoad(AdaptScreenUtils.getPreLoadRunnable());
     }
 
@@ -390,6 +399,14 @@ class UtilsBridge {
     ///////////////////////////////////////////////////////////////////////////
     static void applyLanguage(final Activity activity) {
         LanguageUtils.applyLanguage(activity);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // PermissionUtils
+    ///////////////////////////////////////////////////////////////////////////
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    static boolean isGrantedDrawOverlays() {
+        return PermissionUtils.isGrantedDrawOverlays();
     }
 
     ///////////////////////////////////////////////////////////////////////////
