@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *     desc  : utils about debouncing
  * </pre>
  */
-class DebouncingUtils {
+public class DebouncingUtils {
 
     private static final int               CACHE_SIZE               = 64;
     private static final Map<String, Long> KEY_MILLIS_MAP           = new ConcurrentHashMap<>(CACHE_SIZE);
@@ -45,9 +45,6 @@ class DebouncingUtils {
      * @return {@code true}: yes<br>{@code false}: no
      */
     public static boolean isValid(@NonNull final View view, final long duration) {
-        if (view == null) {
-            throw new IllegalArgumentException("The view is null.");
-        }
         return isValid(String.valueOf(view.hashCode()), duration);
     }
 
