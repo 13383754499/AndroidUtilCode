@@ -113,7 +113,7 @@ public final class DeviceUtils {
      *
      * @return the MAC address
      */
-    @RequiresPermission(allOf = {ACCESS_WIFI_STATE, INTERNET, CHANGE_WIFI_STATE})
+    @RequiresPermission(allOf = {ACCESS_WIFI_STATE, CHANGE_WIFI_STATE})
     public static String getMacAddress() {
         String macAddress = getMacAddress((String[]) null);
         if (!TextUtils.isEmpty(macAddress) || getWifiEnabled()) return macAddress;
@@ -151,7 +151,7 @@ public final class DeviceUtils {
      *
      * @return the MAC address
      */
-    @RequiresPermission(allOf = {ACCESS_WIFI_STATE, INTERNET})
+    @RequiresPermission(allOf = {ACCESS_WIFI_STATE})
     public static String getMacAddress(final String... excepts) {
         String macAddress = getMacAddressByNetworkInterface();
         if (isAddressNotInExcepts(macAddress, excepts)) {
@@ -190,7 +190,7 @@ public final class DeviceUtils {
         return true;
     }
 
-    @SuppressLint({"MissingPermission", "HardwareIds"})
+    @RequiresPermission(ACCESS_WIFI_STATE)
     private static String getMacAddressByWifiInfo() {
         try {
             final WifiManager wifi = (WifiManager) Utils.getApp()
@@ -198,6 +198,7 @@ public final class DeviceUtils {
             if (wifi != null) {
                 final WifiInfo info = wifi.getConnectionInfo();
                 if (info != null) {
+                    @SuppressLint("HardwareIds")
                     String macAddress = info.getMacAddress();
                     if (!TextUtils.isEmpty(macAddress)) {
                         return macAddress;
@@ -387,6 +388,19 @@ public final class DeviceUtils {
         return false;
     }
 
+    /**
+     * Whether user has enabled development settings.
+     *
+     * @return whether user has enabled development settings.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static boolean isDevelopmentSettingsEnabled() {
+        return Settings.Global.getInt(
+                Utils.getApp().getContentResolver(),
+                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0
+        ) > 0;
+    }
+
 
     private static final    String KEY_UDID = "KEY_UDID";
     private volatile static String udid;
@@ -399,7 +413,6 @@ public final class DeviceUtils {
      *
      * @return the unique device id
      */
-    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getUniqueDeviceId() {
         return getUniqueDeviceId("", true);
     }
@@ -413,7 +426,6 @@ public final class DeviceUtils {
      * @param prefix The prefix of the unique device id.
      * @return the unique device id
      */
-    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getUniqueDeviceId(String prefix) {
         return getUniqueDeviceId(prefix, true);
     }
@@ -427,7 +439,6 @@ public final class DeviceUtils {
      * @param useCache True to use cache, false otherwise.
      * @return the unique device id
      */
-    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getUniqueDeviceId(boolean useCache) {
         return getUniqueDeviceId("", useCache);
     }
@@ -442,7 +453,6 @@ public final class DeviceUtils {
      * @param useCache True to use cache, false otherwise.
      * @return the unique device id
      */
-    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getUniqueDeviceId(String prefix, boolean useCache) {
         if (!useCache) {
             return getUniqueDeviceIdReal(prefix);
@@ -473,7 +483,7 @@ public final class DeviceUtils {
         return saveUdid(prefix + 9, "");
     }
 
-    @SuppressLint({"MissingPermission", "HardwareIds"})
+    @RequiresPermission(allOf = {ACCESS_WIFI_STATE, INTERNET, CHANGE_WIFI_STATE})
     public static boolean isSameDevice(final String uniqueDeviceId) {
         // {prefix}{type}{32id}
         if (TextUtils.isEmpty(uniqueDeviceId) && uniqueDeviceId.length() < 33) return false;
