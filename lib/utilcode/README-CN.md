@@ -2,10 +2,11 @@
 
 Gradle:
 ```groovy
-implementation 'com.blankj:utilcode:1.30.6'
-
 // if u use AndroidX, use the following
-implementation 'com.blankj:utilcodex:1.30.6'
+implementation 'com.blankj:utilcodex:1.31.0'
+
+// Not in maintenance
+implementation 'com.blankj:utilcode:1.30.6'
 ```
 
 
@@ -78,6 +79,7 @@ getAppSignaturesMD5               : 获取应用签名的的 MD5 值
 getAppInfo                        : 获取 App 信息
 getAppsInfo                       : 获取所有已安装 App 信息
 getApkInfo                        : 获取 Apk 信息
+isFirstTimeInstalled              : 判断应用是否首次安装
 ```
 
 * ### 数组相关 -> [ArrayUtils.java][array.java] -> [Test][array.test]

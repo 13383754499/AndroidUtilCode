@@ -12,13 +12,14 @@ import android.content.pm.SigningInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * <pre>
@@ -383,6 +384,38 @@ public final class AppUtils {
             return 0;
         }
     }
+
+
+    /**
+     * Return true if this is the first ever time that the application is installed on the device.
+     *
+     * @return true if this is the first ever time that the application is installed on the device.
+     */
+    public static boolean isFirstTimeInstall() {
+        try {
+            long firstInstallTime = Utils.getApp().getPackageManager().getPackageInfo(getAppPackageName(), 0).firstInstallTime;
+            long lastUpdateTime = Utils.getApp().getPackageManager().getPackageInfo(getAppPackageName(), 0).lastUpdateTime;
+            return firstInstallTime == lastUpdateTime;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Return true if app was previously installed and this one is an update/upgrade to that one, returns false if this is a fresh installation and not an update/upgrade.
+     *
+     * @return true if app was previously installed and this one is an update/upgrade to that one, returns false if this is a fresh installation and not an update/upgrade.
+     */
+    public static boolean isAppUpgraded() {
+        try {
+            long firstInstallTime = Utils.getApp().getPackageManager().getPackageInfo(getAppPackageName(), 0).firstInstallTime;
+            long lastUpdateTime = Utils.getApp().getPackageManager().getPackageInfo(getAppPackageName(), 0).lastUpdateTime;
+            return firstInstallTime != lastUpdateTime;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     /**
      * Return the application's package name.
@@ -771,6 +804,22 @@ public final class AppUtils {
         appInfo.sourceDir = apkFilePath;
         appInfo.publicSourceDir = apkFilePath;
         return getBean(pm, pi);
+    }
+
+
+    /**
+     * Return whether the application was first installed.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isFirstTimeInstalled() {
+        try {
+            PackageInfo pi = Utils.getApp().getPackageManager().getPackageInfo(Utils.getApp().getPackageName(), 0);
+            return pi.firstInstallTime == pi.lastUpdateTime;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     private static AppInfo getBean(final PackageManager pm, final PackageInfo pi) {
